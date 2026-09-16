@@ -20,7 +20,7 @@
                      HorizontalContentAlignment="Stretch"
                      SelectionChanged="IconsListBox_SelectionChanged"/>
         </StackPanel>
-
+        
         <StackPanel Grid.Column="1" Margin="10">
             <TextBlock Text="Главная иконка противника"
                        FontWeight="Bold"
@@ -38,3 +38,4 @@
         </StackPanel>
     </Grid>
 </Window>
+    

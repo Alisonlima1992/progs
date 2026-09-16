@@ -193,7 +193,7 @@ namespace EnemyEditor
         private void RefreshEnemiesList()
         {
             EnemiesListBox.ItemsSource = null;
-            EnemiesListBox.ItemsSource = enemyTemplates.GetListOfEnemyNames();
+            EnemiesListBox.ItemsSource = enemyTemplates.GetEnemies();
         }
 
         private void SaveJsonButton_Click(object sender, RoutedEventArgs e)

@@ -92,5 +92,10 @@ namespace EnemyEditor
                     lifeModifier, baseGold, goldModifier, spawnChance));
             }
         }
+
+        public List<CEnemyTemplate> GetEnemies()
+        {
+            return new List<CEnemyTemplate>(enemies);
+        }
     }
 }

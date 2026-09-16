@@ -195,5 +195,45 @@ namespace EnemyEditor
             EnemiesListBox.ItemsSource = null;
             EnemiesListBox.ItemsSource = enemyTemplates.GetListOfEnemyNames();
         }
+
+        private void SaveJsonButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Title = "Сохранить список противников",
+                Filter = "JSON файлы (*.json)|*.json",
+                DefaultExt = ".json",
+                FileName = "enemies"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                enemyTemplates.SaveToJson(dialog.FileName);
+                MessageBox.Show("Сохранено: " + dialog.FileName);
+            }
+        }
+
+        private void LoadJsonButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Загрузить список противников",
+                Filter = "JSON файлы (*.json)|*.json",
+                DefaultExt = ".json"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    enemyTemplates.LoadFromJson(dialog.FileName);
+                    RefreshEnemiesList();
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show("Ошибка загрузки JSON: " + ex.Message);
+                }
+            }
+        }
     }
 }

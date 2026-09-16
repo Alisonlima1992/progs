@@ -12,9 +12,12 @@ namespace EnemyEditor
     public partial class MainWindow : Window
     {
         private const int IconListSize = 64;
-        private const int MainIconSize = 128;
 
         private List<EnemyIcon> enemyIcons = new List<EnemyIcon>();
+
+        private CEnemyTemplateList enemyTemplates = new CEnemyTemplateList();
+
+        private string selectedIconName = null;
 
         public MainWindow()
         {
@@ -97,9 +100,100 @@ namespace EnemyEditor
                 MainEnemyIcon.Source = new BitmapImage(
                     new System.Uri(selectedImage.Source.ToString()));
 
-                string iconName = Path.GetFileName(selectedImage.Source.ToString());
-                this.Title = "Редактор противников — выбрана: " + iconName;
+                selectedIconName = Path.GetFileName(selectedImage.Source.ToString());
+
+                IconNameBox.Text = selectedIconName;
+
+                this.Title = "Редактор противников — выбрана: " + selectedIconName;
             }
+        }
+
+        private void AddEnemyButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(NameBox.Text))
+            {
+                MessageBox.Show("Введите имя противника.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(selectedIconName))
+            {
+                MessageBox.Show("Выберите иконку в списке слева.");
+                return;
+            }
+
+            if (enemyTemplates.GetEnemyByName(NameBox.Text) != null)
+            {
+                MessageBox.Show("Противник с таким именем уже существует.");
+                return;
+            }
+
+            if (!int.TryParse(BaseLifeBox.Text, out int baseLife))
+            {
+                MessageBox.Show("BaseLife — целое число.");
+                return;
+            }
+
+            if (!double.TryParse(LifeModifierBox.Text,
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out double lifeModifier))
+            {
+                MessageBox.Show("LifeModifier — число (например, 1.0).");
+                return;
+            }
+
+            if (!int.TryParse(BaseGoldBox.Text, out int baseGold))
+            {
+                MessageBox.Show("BaseGold — целое число.");
+                return;
+            }
+
+            if (!double.TryParse(GoldModifierBox.Text,
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out double goldModifier))
+            {
+                MessageBox.Show("GoldModifier — число (например, 1.0).");
+                return;
+            }
+
+            if (!double.TryParse(SpawnChanceBox.Text,
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out double spawnChance))
+            {
+                MessageBox.Show("SpawnChance — число (например, 0.5).");
+                return;
+            }
+
+            enemyTemplates.AddEnemy(
+                NameBox.Text, selectedIconName,
+                baseLife, lifeModifier,
+                baseGold, goldModifier,
+                spawnChance);
+
+            RefreshEnemiesList();
+
+            NameBox.Text = "";
+        }
+
+        private void DeleteEnemyButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (EnemiesListBox.SelectedItem is CEnemyTemplate selected)
+            {
+                enemyTemplates.DeleteEnemyByName(selected.Name);
+                RefreshEnemiesList();
+            }
+            else
+            {
+                MessageBox.Show("Выберите противника в списке.");
+            }
+        }
+        private void RefreshEnemiesList()
+        {
+            EnemiesListBox.ItemsSource = null;
+            EnemiesListBox.ItemsSource = enemyTemplates.GetListOfEnemyNames();
         }
     }
 }

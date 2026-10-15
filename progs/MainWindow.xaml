@@ -85,32 +85,39 @@
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 10">
                     <Button Name="AddEnemyButton"
                             Content="Добавить противника"
-                            Width="160"
+                            Width="130"
                             Height="30"
                             Margin="0 0 10 0"
                             Click="AddEnemyButton_Click"/>
                     <Button Name="DeleteEnemyButton"
                             Content="Удалить выбранного"
-                            Width="160"
+                            Width="130"
                             Height="30"
                             Margin="0 0 10 0"
                             Click="DeleteEnemyButton_Click"/>
                     <Button Name="SaveJsonButton"
                             Content="Сохранить в JSON"
-                            Width="160"
+                            Width="130"
                             Height="30"
                             Margin="0 0 10 0"
                             Click="SaveJsonButton_Click"/>
                     <Button Name="LoadJsonButton"
                             Content="Загрузить из JSON"
-                            Width="160"
+                            Width="130"
                             Height="30"
+                            Margin="0 0 10 0"
                             Click="LoadJsonButton_Click"/>
+                    <Button x:Name="SaveChangesButton"
+                            Content="Сохранить изменения"
+                            Width="130"
+                            Height="30"
+                            Click="SaveChangesButton_Click"/>
                 </StackPanel>
 
                 <ListBox Grid.Row="1"
-                         Name="EnemiesListBox"
-                         DisplayMemberPath="Name"/>
+                     Name="EnemiesListBox"
+                     DisplayMemberPath="Name"
+                     SelectionChanged="EnemiesListBox_SelectionChanged"/> 
             </Grid>
         </Grid>
     </Grid>

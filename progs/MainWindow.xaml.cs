@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Linq;
 
 namespace EnemyEditor
 {
@@ -234,6 +235,72 @@ namespace EnemyEditor
                     MessageBox.Show("Ошибка загрузки JSON: " + ex.Message);
                 }
             }
+        }
+
+        private void EnemiesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (EnemiesListBox.SelectedItem is CEnemyTemplate selected)
+            {
+                NameBox.Text = selected.Name;
+                IconNameBox.Text = selected.IconName;
+                BaseLifeBox.Text = selected.BaseLife.ToString();
+                LifeModifierBox.Text = selected.LifeModifier.ToString(
+                    System.Globalization.CultureInfo.InvariantCulture);
+                BaseGoldBox.Text = selected.BaseGold.ToString();
+                GoldModifierBox.Text = selected.GoldModifier.ToString(
+                    System.Globalization.CultureInfo.InvariantCulture);
+                SpawnChanceBox.Text = selected.SpawnChance.ToString(
+                    System.Globalization.CultureInfo.InvariantCulture);
+
+                selectedIconName = selected.IconName;
+
+                var icon = enemyIcons.FirstOrDefault(i => i.Name == selected.IconName);
+                if (icon != null)
+                {
+                    MainEnemyIcon.Source = new BitmapImage(new System.Uri(icon.ImagePath));
+                }
+            }
+        }
+
+        private void SaveChangesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(EnemiesListBox.SelectedItem is CEnemyTemplate selected))
+            {
+                MessageBox.Show("Выберите противника в списке.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(NameBox.Text))
+            {
+                MessageBox.Show("Введите имя противника.");
+                return;
+            }
+
+            var existing = enemyTemplates.GetEnemyByName(NameBox.Text);
+            if (existing != null && existing != selected)
+            {
+                MessageBox.Show("Противник с таким именем уже существует.");
+                return;
+            }
+
+            if (!int.TryParse(BaseLifeBox.Text, out int baseLife)) { MessageBox.Show("BaseLife — целое число."); return; }
+            if (!double.TryParse(LifeModifierBox.Text, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out double lifeModifier))
+            { MessageBox.Show("LifeModifier — число."); return; }
+            if (!int.TryParse(BaseGoldBox.Text, out int baseGold)) { MessageBox.Show("BaseGold — целое число."); return; }
+            if (!double.TryParse(GoldModifierBox.Text, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out double goldModifier))
+            { MessageBox.Show("GoldModifier — число."); return; }
+            if (!double.TryParse(SpawnChanceBox.Text, System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture, out double spawnChance))
+            { MessageBox.Show("SpawnChance — число."); return; }
+
+            enemyTemplates.DeleteEnemyByName(selected.Name);
+            enemyTemplates.AddEnemy(NameBox.Text, selectedIconName ?? selected.IconName,
+                baseLife, lifeModifier, baseGold, goldModifier, spawnChance);
+
+            RefreshEnemiesList();
+
         }
     }
 }
